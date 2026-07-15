@@ -1,3 +1,88 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#05090b"><title>VOID//SALVAGE — 机库</title><style>
-:root{--bg:#05090b;--line:#243238;--text:#eef3ef;--muted:#718086;--green:#b8ed58;--cyan:#4fd6d0}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif}body{overflow-x:hidden;background:radial-gradient(circle at 73% 42%,rgba(79,214,208,.12),transparent 28%),linear-gradient(135deg,#05090b,#0a1114)}body:before{content:"";position:fixed;inset:0;opacity:.18;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:46px 46px}.mono{font-family:ui-monospace,"Cascadia Mono",monospace}header{height:70px;padding:0 clamp(18px,4vw,62px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}.brand{font-weight:900;letter-spacing:.1em}.credits{font:800 17px/1 ui-monospace,monospace;color:var(--green)}main{min-height:calc(100vh - 70px);display:grid;grid-template-columns:minmax(360px,650px) 1fr;align-items:center;gap:7vw;width:min(1500px,calc(100% - 48px));margin:auto;position:relative;z-index:1;padding:55px 0}.eyebrow{font:700 10px/1 ui-monospace,monospace;letter-spacing:.22em;color:var(--green)}h1{font-size:clamp(66px,9vw,142px);letter-spacing:-.085em;line-height:.78;margin:32px 0 36px}h1 span{display:block;color:transparent;-webkit-text-stroke:1px #6b797d;margin-left:.32em}.copy{max-width:540px;color:#92a0a3;line-height:1.85;font-size:15px}.actions{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;margin-top:38px}.actions a{height:68px;border:1px solid #3b4a4f;display:flex;align-items:center;justify-content:space-between;padding:0 21px;text-decoration:none;color:white;font-weight:900;letter-spacing:.05em}.actions a:first-child{background:var(--green);border-color:var(--green);color:#091009}.actions small{font:700 9px/1 ui-monospace,monospace;opacity:.6}.actions a:hover{transform:translateY(-2px);box-shadow:0 18px 55px rgba(0,0,0,.35)}.spec{display:flex;gap:35px;margin-top:24px;color:var(--muted);font:10px/1.5 ui-monospace,monospace}.spec b{display:block;color:white;font-size:17px}.visual{min-height:620px;position:relative;display:grid;place-items:center}.ring{width:min(44vw,590px);aspect-ratio:1;border:1px solid #294047;border-radius:50%;position:relative;box-shadow:inset 0 0 80px rgba(79,214,208,.04),0 0 100px rgba(0,0,0,.4)}.ring:before,.ring:after{content:"";position:absolute;border:1px solid #1d2c31;border-radius:50%;inset:12%}.ring:after{inset:28%;border-color:#3e5e62;box-shadow:0 0 35px rgba(79,214,208,.12)}.ship{position:absolute;left:50%;top:50%;width:0;height:0;transform:translate(-50%,-50%);border-left:72px solid transparent;border-right:72px solid transparent;border-bottom:190px solid #c9d1ce;filter:drop-shadow(0 0 24px rgba(79,214,208,.35))}.ship:after{content:"";position:absolute;left:-18px;top:72px;width:36px;height:92px;background:#174c4f}.orbit{position:absolute;inset:7%;border:1px dashed #26383d;border-radius:50%;animation:spin 28s linear infinite}.orbit i{position:absolute;width:8px;height:8px;background:var(--green);border-radius:50%;left:13%;top:12%;box-shadow:0 0 20px var(--green)}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:900px){main{grid-template-columns:1fr;text-align:center}.copy{margin:auto}.visual{min-height:390px}.ring{width:min(78vw,420px)}.actions{max-width:620px;margin-left:auto;margin-right:auto}.spec{justify-content:center}}@media(max-width:520px){main{width:calc(100% - 28px);padding-top:38px}h1{font-size:64px}.actions{grid-template-columns:1fr}.visual{min-height:310px}.ship{border-left-width:45px;border-right-width:45px;border-bottom-width:120px}.ship:after{top:44px;height:59px;width:24px;left:-12px}}
-</style></head><body><header><div class="brand">VOID//SALVAGE</div><div class="credits"><span id="credits">0</span> CR</div></header><main><section><div class="eyebrow">ORBITAL RECOVERY UNIT / HANGAR</div><h1>残骸带<span>回收协议</span></h1><p class="copy">驾驶单人回收艇进入失控轨道，带回资产，避开致命残骸。每次作业结算的信用点，都能在独立成长树中永久强化下一次出航。</p><div class="actions"><a href="game.html">开始本次作业 <small>ENTER SECTOR →</small></a><a href="tree.html">进入成长树 <small>DEVELOPMENT →</small></a></div><div class="spec"><div>BASE HULL<b>1 LIFE</b></div><div>INITIAL RUN<b id="duration">5 SEC</b></div><div>TRACTOR<b id="tractor">OFF</b></div></div></section><section class="visual" aria-hidden="true"><div class="ring"><div class="orbit"><i></i></div><div class="ship"></div></div></section></main><script>const KEY='void-salvage-tree-v3',s=JSON.parse(localStorage.getItem(KEY)||'null')||{credits:0,owned:[]},h=id=>(s.owned||[]).includes(id);document.querySelector('#credits').textContent=(s.credits||0).toLocaleString();document.querySelector('#duration').textContent=(5+(h('time1')?5:0)+(h('time2')?8:0)+(h('time3')?12:0)+(h('apex')?10:0))+' SEC';document.querySelector('#tractor').textContent=h('tractor2')?'140 PX':h('tractor1')?'70 PX':'OFF';</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VOID//SALVAGE — 机库</title>
+<style>
+:root{--bg:#05090b;--line:#26363c;--text:#eef3ef;--muted:#829196;--green:#b8ed58;--cyan:#4fd6d0;--red:#ef635f;--gold:#ffc94a}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif}body{overflow-x:hidden;background:radial-gradient(circle at 74% 43%,rgba(79,214,208,.12),transparent 29%),linear-gradient(135deg,#05090b,#0a1114)}body:before{content:"";position:fixed;inset:0;opacity:.18;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:46px 46px}header{height:70px;padding:0 clamp(18px,4vw,62px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}.brand{font-weight:900;letter-spacing:.1em}.credits{font:800 17px/1 ui-monospace,monospace;color:var(--green)}main{min-height:calc(100vh - 70px);display:grid;grid-template-columns:minmax(410px,660px) 1fr;align-items:center;gap:6vw;width:min(1500px,calc(100% - 48px));margin:auto;position:relative;z-index:1;padding:42px 0}.eyebrow{font:700 10px/1 ui-monospace,monospace;letter-spacing:.22em;color:var(--green)}h1{font-size:clamp(65px,8vw,128px);letter-spacing:-.082em;line-height:.8;margin:28px 0 28px}h1 span{display:block;color:transparent;-webkit-text-stroke:1px #75858a;margin-left:.3em}.copy{max-width:590px;color:#9aa7aa;line-height:1.8;font-size:15px}.contract{margin-top:24px;border:1px solid var(--line);background:rgba(8,15,18,.76);display:grid;grid-template-columns:1.25fr 1fr 1fr}.contract div{padding:14px 16px;border-right:1px solid var(--line)}.contract div:last-child{border:0}.contract span,.next span{display:block;color:var(--muted);font:700 9px/1.3 ui-monospace,monospace;letter-spacing:.12em}.contract strong{display:block;margin-top:7px;font-size:15px}.actions{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;margin-top:13px}.actions a{min-height:66px;border:1px solid #3b4a4f;display:flex;align-items:center;justify-content:space-between;padding:0 20px;text-decoration:none;color:white;font-weight:900;letter-spacing:.04em}.actions a:first-child{background:var(--green);border-color:var(--green);color:#091009}.actions small{font:700 9px/1 ui-monospace,monospace;opacity:.65}.actions a:hover{transform:translateY(-2px);box-shadow:0 18px 55px rgba(0,0,0,.35)}.next{margin-top:12px;padding:12px 15px;border-left:2px solid var(--gold);background:rgba(255,201,74,.045);display:flex;justify-content:space-between;gap:15px}.next strong{font-size:12px;color:var(--gold)}.rules{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;color:#87969a;font:11px/1.5 ui-monospace,monospace}.rules b{color:white}.visual{min-height:650px;position:relative;display:grid;place-items:center}.dock{width:min(46vw,630px);aspect-ratio:1;border:1px solid #294047;border-radius:50%;position:relative;box-shadow:inset 0 0 90px rgba(79,214,208,.05),0 0 100px rgba(0,0,0,.45)}.dock:before,.dock:after{content:"";position:absolute;border:1px solid #1d2c31;border-radius:50%;inset:10%}.dock:after{inset:25%;border-color:#3e5e62;box-shadow:0 0 35px rgba(79,214,208,.13)}.rail{position:absolute;left:12%;right:12%;top:49%;height:3px;background:#263a40;box-shadow:0 -115px 0 #16262b,0 115px 0 #16262b}.ship{position:absolute;left:50%;top:50%;width:175px;height:265px;transform:translate(-50%,-50%);filter:drop-shadow(0 0 24px rgba(79,214,208,.38))}.ship:before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);border-left:72px solid transparent;border-right:72px solid transparent;border-bottom:205px solid #c9d1ce}.ship:after{content:"RU-07";position:absolute;left:50%;top:93px;transform:translateX(-50%);width:38px;height:94px;background:#174c4f;border:2px solid #4d7678;color:#9ce9e4;font:800 8px/94px ui-monospace,monospace;text-align:center}.wing{position:absolute;bottom:20px;width:65px;height:70px;background:#798785;border:1px solid #b8c2bf}.wing.l{left:1px;clip-path:polygon(100% 0,100% 100%,0 65%)}.wing.r{right:1px;clip-path:polygon(0 0,100% 65%,0 100%)}.asset,.danger{position:absolute;box-shadow:0 0 18px currentColor}.asset{width:20px;height:20px;border:3px solid var(--green);transform:rotate(45deg);left:16%;top:28%;color:var(--green)}.asset.r{left:auto;right:14%;top:63%;border-radius:50%;transform:none;border-color:var(--cyan);color:var(--cyan)}.danger{width:34px;height:34px;right:13%;top:22%;background:#5b2827;border:3px solid var(--red);color:var(--red);clip-path:polygon(50% 0,62% 32%,100% 18%,73% 50%,100% 82%,62% 68%,50% 100%,38% 68%,0 82%,27% 50%,0 18%,38% 32%)}.tractor{position:absolute;left:50%;top:50%;width:280px;height:280px;transform:translate(-50%,-50%);border:1px dashed rgba(79,214,208,.25);border-radius:50%}
+@media(max-width:930px){main{grid-template-columns:1fr;text-align:center}.copy{margin:auto}.contract,.actions{max-width:660px;margin-left:auto;margin-right:auto}.next{max-width:660px;margin-left:auto;margin-right:auto}.rules{justify-content:center}.visual{min-height:360px}.dock{width:min(78vw,400px)}}
+@media(max-width:560px){main{width:calc(100% - 28px);padding-top:32px}h1{font-size:63px}.contract{grid-template-columns:1fr}.contract div{border-right:0;border-bottom:1px solid var(--line)}.actions{grid-template-columns:1fr}.rules{display:block}.rules span{display:block;margin:7px}.visual{min-height:255px}.dock{width:245px}.ship{transform:translate(-50%,-50%) scale(.62)}.next{display:block}.next strong{display:block;margin-top:7px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">VOID//SALVAGE</div>
+<div class="credits">
+<span id="credits">0</span> CR</div>
+</header>
+<main>
+<section>
+<div class="eyebrow">ORBITAL RECOVERY UNIT / ACTIVE CONTRACT</div>
+<h1>残骸带<span>远征协议</span>
+</h1>
+<p class="copy">完成货值目标后主动进入撤离门。你可以安全带走全部资产，也可以继续深入三段高危航道；一旦坠毁，未保险资产只保留 35%。</p>
+<div class="contract">
+<div>
+<span>当前合同</span>
+<strong>外围废墟回收</strong>
+</div>
+<div>
+<span>目标货值</span>
+<strong>120 CR</strong>
+</div>
+<div>
+<span>预计完整收益</span>
+<strong>140–900 CR</strong>
+</div>
+</div>
+<div class="actions">
+<a href="game.html">
+<span id="launchText">执行首次回收</span>
+<small>ENTER SECTOR →</small>
+</a>
+<a href="tree.html">进入成长树 <small id="treeState">DEVELOPMENT →</small>
+</a>
+</div>
+<div class="next">
+<span>下一成长目标</span>
+<strong id="nextNode">扫描中</strong>
+</div>
+<div class="rules">
+<span>
+<b>鼠标</b> 指示航向</span>
+<span>
+<b>资产</b> 达标开启撤离门</span>
+<span>
+<b>船体</b> 一条命，护盾吸收撞击</span>
+</div>
+</section>
+<section class="visual" aria-hidden="true">
+<div class="dock">
+<div class="rail">
+</div>
+<div class="tractor">
+</div>
+<i class="asset">
+</i>
+<i class="asset r">
+</i>
+<i class="danger">
+</i>
+<div class="ship">
+<i class="wing l">
+</i>
+<i class="wing r">
+</i>
+</div>
+</div>
+</section>
+</main>
+<script>
+
+const KEY='void-salvage-tree-v4',OLD='void-salvage-tree-v3';let s=JSON.parse(localStorage.getItem(KEY)||'null');if(!s){let old=JSON.parse(localStorage.getItem(OLD)||'null')||{};s={version:4,credits:old.credits||0,owned:[]};localStorage.setItem(KEY,JSON.stringify(s))}const has=id=>(s.owned||[]).includes(id),nodes=[['engine1','冷启动引擎',120,[]],['tractor1','微型牵引场',150,[]],['shield1','偏转护盾',180,[]],['engine2','矢量喷口',420,['engine1']],['tractor2','场域增幅',480,['tractor1']],['fuel1','短程燃料舱',520,['shield1']],['agile','轻量船壳',900,['engine2']],['overdrive','过载推进',900,['engine2']],['tractorWide','广域牵引',1000,['tractor2']],['yield1','精炼协议',1000,['tractor2']],['shield2','双层偏转阵列',1100,['fuel1']],['fuel2','深空燃料',1100,['fuel1']]];document.querySelector('#credits').textContent=(s.credits||0).toLocaleString();let available=nodes.filter(n=>!has(n[0])&&n[3].every(has)).sort((a,b)=>a[2]-b[2]),n=available[0];document.querySelector('#nextNode').textContent=n?`${n[1]} · ${Math.max(0,n[2]-(s.credits||0))?`还差 ${Math.max(0,n[2]-(s.credits||0))} CR`:'现在可以解锁'}`:'继续探索树冠节点';let can=available.filter(n=>(s.credits||0)>=n[2]).length;document.querySelector('#treeState').textContent=can?`${can} 个节点可解锁 →`:'DEVELOPMENT →';let owned=(s.owned||[]).length;document.querySelector('#launchText').textContent=owned>8?'启动深空远征':owned>2?'进入高危残骸带':'执行首次回收';
+
+</script>
+</body>
+</html>
