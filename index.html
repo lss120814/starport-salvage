@@ -9,6 +9,20 @@
 @media(max-width:930px){main{grid-template-columns:1fr;text-align:center}.copy{margin:auto}.contract,.actions{max-width:660px;margin-left:auto;margin-right:auto}.next{max-width:660px;margin-left:auto;margin-right:auto}.rules{justify-content:center}.visual{min-height:360px}.dock{width:min(78vw,400px)}}
 @media(max-width:560px){main{width:calc(100% - 28px);padding-top:32px}h1{font-size:63px}.contract{grid-template-columns:1fr}.contract div{border-right:0;border-bottom:1px solid var(--line)}.actions{grid-template-columns:1fr}.rules{display:block}.rules span{display:block;margin:7px}.visual{min-height:255px}.dock{width:245px}.ship{transform:translate(-50%,-50%) scale(.62)}.next{display:block}.next strong{display:block;margin-top:7px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+/* V9 visual relaunch */
+body{background:radial-gradient(circle at 78% 38%,rgba(38,181,194,.2),transparent 28%),radial-gradient(circle at 18% 88%,rgba(184,237,88,.08),transparent 32%),#030709}
+header{height:78px;background:rgba(3,7,9,.82);backdrop-filter:blur(18px);border-bottom-color:#31464d}
+.brand{display:flex;align-items:center;gap:12px}.brand:before{content:"V9";padding:5px 7px;background:var(--green);color:#071006;font:900 10px/1 ui-monospace,monospace;letter-spacing:.08em}
+.release-banner{display:flex;align-items:center;gap:11px;margin-bottom:24px;color:#aebbbd;font:800 10px/1 ui-monospace,monospace;letter-spacing:.16em}.release-banner:before{content:"";width:42px;height:2px;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+.eyebrow{color:var(--cyan)}h1{font-size:clamp(62px,7.5vw,116px);text-transform:uppercase}h1 span{-webkit-text-stroke-color:#91a6ab;color:rgba(145,166,171,.04)}
+.copy{font-size:16px;border-left:2px solid var(--green);padding-left:18px}
+.contract{border-color:#395159;background:linear-gradient(135deg,rgba(12,23,27,.94),rgba(5,11,14,.78));box-shadow:0 22px 80px rgba(0,0,0,.28)}
+.actions a:first-child{box-shadow:0 16px 45px rgba(184,237,88,.14)}
+.visual{isolation:isolate}.dock{border-radius:18px;transform:rotate(-4deg);background:linear-gradient(145deg,rgba(11,24,29,.86),rgba(2,7,9,.45));border-color:#3b5961;box-shadow:inset 0 0 120px rgba(79,214,208,.09),0 45px 120px rgba(0,0,0,.55)}.dock:before,.dock:after{border-radius:12px}.dock:before{inset:5%;border-style:dashed}.dock:after{inset:17%;border-color:rgba(79,214,208,.24)}
+.dock .ship,.dock .wing{display:none}.ship-sprite{position:absolute;z-index:3;left:50%;top:50%;width:44%;aspect-ratio:1;transform:translate(-50%,-50%) rotate(4deg);background-image:url('assets/salvage-sprites.png');background-size:300% 200%;background-position:0 0;background-repeat:no-repeat;filter:drop-shadow(0 24px 25px rgba(0,0,0,.7)) drop-shadow(0 0 24px rgba(79,214,208,.34))}.dock-label{position:absolute;left:7%;bottom:7%;z-index:4;color:#c2d2d3;font:900 11px/1 ui-monospace,monospace;letter-spacing:.16em}.dock-label b{display:block;margin-top:8px;color:var(--green);font-size:22px;letter-spacing:.03em}.rail{left:6%;right:6%;background:#38515a}.tractor{width:55%;height:55%;border-color:rgba(184,237,88,.28)}
+.patch-notes{position:absolute;right:-18px;top:12%;z-index:5;width:190px;padding:16px;background:#091216;border:1px solid #35505a;border-top:3px solid var(--cyan);box-shadow:0 25px 60px rgba(0,0,0,.45)}.patch-notes span{display:block;color:var(--cyan);font:900 9px/1 ui-monospace,monospace;letter-spacing:.15em;margin-bottom:11px}.patch-notes b{display:block;margin:7px 0;color:#d4dddd;font-size:12px}.patch-notes b:before{content:"+";color:var(--green);margin-right:8px}
+@media(max-width:930px){.patch-notes{right:0}.release-banner{justify-content:center}.copy{border-left:0;border-top:2px solid var(--green);padding:16px 0 0}}
+@media(max-width:560px){header{height:66px}.patch-notes{display:none}.dock{border-radius:12px}.dock-label{font-size:8px}.dock-label b{font-size:15px}}
 </style>
 </head>
 <body>
@@ -19,6 +33,7 @@
 </header>
 <main>
 <section>
+<div class="release-banner">SUPPLY DIRECTOR ONLINE / BUILD 9.1</div>
 <div class="eyebrow">ORBITAL RECOVERY UNIT / ACTIVE CONTRACT</div>
 <h1>残骸带<span>远征协议</span>
 </h1>
@@ -38,7 +53,7 @@
 </div>
 </div>
 <div class="actions">
-<a href="game.html">
+<a href="game.html?v=9.1">
 <span id="launchText">执行首次回收</span>
 <small>SPACE · ENTER SECTOR →</small>
 </a>
@@ -70,19 +85,16 @@
 </i>
 <i class="danger">
 </i>
-<div class="ship">
-<i class="wing l">
-</i>
-<i class="wing r">
-</i>
+<div class="ship-sprite"></div>
+<div class="dock-label">ACTIVE VESSEL<b>RU-09 WRAITH</b></div>
 </div>
-</div>
+<aside class="patch-notes"><span>V9.1 FIELD UPDATE</span><b>持续物资投放</b><b>全新工业贴图</b><b>独立危险导演</b><b>三段收益递增</b></aside>
 </section>
 </main>
 <script>
 
 const KEY='void-salvage-tree-v4',OLD='void-salvage-tree-v3';let s=JSON.parse(localStorage.getItem(KEY)||'null');if(!s){let old=JSON.parse(localStorage.getItem(OLD)||'null')||{};s={version:4,credits:old.credits||0,owned:[]};localStorage.setItem(KEY,JSON.stringify(s))}const has=id=>(s.owned||[]).includes(id),nodes=[['engine1','冷启动引擎',120,[]],['tractor1','微型牵引场',150,[]],['shield1','偏转护盾',180,[]],['engine2','矢量喷口',420,['engine1']],['tractor2','场域增幅',480,['tractor1']],['fuel1','短程燃料舱',520,['shield1']],['agile','轻量船壳',900,['engine2']],['overdrive','过载推进',900,['engine2']],['tractorWide','广域牵引',1000,['tractor2']],['yield1','精炼协议',1000,['tractor2']],['shield2','双层偏转阵列',1100,['fuel1']],['fuel2','深空燃料',1100,['fuel1']]];document.querySelector('#credits').textContent=(s.credits||0).toLocaleString();let available=nodes.filter(n=>!has(n[0])&&n[3].every(has)).sort((a,b)=>a[2]-b[2]),n=available[0];document.querySelector('#nextNode').textContent=n?`${n[1]} · ${Math.max(0,n[2]-(s.credits||0))?`还差 ${Math.max(0,n[2]-(s.credits||0))} CR`:'现在可以解锁'}`:'继续探索树冠节点';let can=available.filter(n=>(s.credits||0)>=n[2]).length;document.querySelector('#treeState').textContent=can?`${can} 个节点可解锁 →`:'DEVELOPMENT →';let owned=(s.owned||[]).length;document.querySelector('#launchText').textContent=owned>8?'启动深空远征':owned>2?'进入高危残骸带':'执行首次回收';
-document.querySelector('#treeState').textContent='ENTER · '+document.querySelector('#treeState').textContent;addEventListener('keydown',e=>{if(e.repeat)return;if(e.code==='Space'){e.preventDefault();location.href='game.html'}else if(e.key==='Enter'){e.preventDefault();location.href='tree.html'}});
+document.querySelector('#treeState').textContent='ENTER · '+document.querySelector('#treeState').textContent;addEventListener('keydown',e=>{if(e.repeat)return;if(e.code==='Space'){e.preventDefault();location.href='game.html?v=9.1'}else if(e.key==='Enter'){e.preventDefault();location.href='tree.html'}});
 
 </script>
 </body>
