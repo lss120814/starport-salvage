@@ -72,6 +72,8 @@ const canvas = Object.assign(element('game'), {
 const sandbox = {
   document: {
     querySelector: (selector) => selector === '#game' ? canvas : element(selector.slice(1)),
+    addEventListener() {},
+    hidden: false,
     querySelectorAll: (selector) => {
       if (selector === '[data-module]') {
         const ids = [...element('moduleGrid').innerHTML.matchAll(/data-module="([^"]+)"/g)].map(m => m[1]);
@@ -90,7 +92,7 @@ const sandbox = {
     setItem() {},
   },
   sessionStorage: {
-    getItem: () => 'active',
+    getItem: () => JSON.stringify({ version: 4, credits: 0, owned: [] }),
     setItem() {},
   },
   Image: class Image {
@@ -98,7 +100,7 @@ const sandbox = {
   },
   innerWidth: 1200,
   innerHeight: 800,
-  devicePixelRatio: 1,
+  devicePixelRatio: 1.5,
   location: { href: '', search: '?threat=2', reload() {} },
   URLSearchParams,
   performance: { now: () => now },

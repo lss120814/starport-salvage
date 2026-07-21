@@ -18,8 +18,13 @@ const checks = {
   keyboardOverridesPointer: game.includes('if(move)pointerActive=false'),
   distinctMissions: game.includes('10 秒扫描') && game.includes('3 枚冷却核心'),
   safeReturnIsNotVictory: game.includes("finish(true,false)") && game.includes("if(complete)save.victories"),
-  persistentTree: tree.includes('save.owned.push(id)') && tree.includes('localStorage.setItem(KEY'),
-  freshSessionTree: [home, game, tree].every(page => page.includes("SESSION='void-salvage-session-v1'") && page.includes('sessionStorage.getItem(SESSION)')),
+  persistentTree: tree.includes('save.owned.push(id)') && tree.includes('sessionStorage.setItem(KEY'),
+  freshSessionTree: [home, game, tree].every(page => page.includes('sessionStorage.getItem(KEY)') && page.includes('sessionStorage.setItem(KEY')),
+  isolatedTabs: [home, game, tree].every(page => !page.includes('localStorage.setItem(KEY')),
+  dprIndependentWorld: game.includes('W=innerWidth;H=innerHeight') && game.includes('ctx.setTransform(d,0,0,d,0,0)'),
+  stableTouchControls: game.includes('setPointerCapture?.(e.pointerId)') && game.includes('onlostpointercapture=release') && !game.includes('b.onpointerleave='),
+  clearsStuckInput: game.includes("addEventListener('blur',clearInput)") && game.includes("document.addEventListener('visibilitychange'") && game.includes('clearInput();state=\'paused\''),
+  responsiveMobileTree: tree.includes('.tree{width:100%;height:auto;transform:none;display:flex;flex-direction:column}') && tree.includes('.fork{grid-template-columns:1fr'),
   noHighScore: !home.includes('最高纪录') && !game.includes('最高纪录') && !tree.includes('最高纪录'),
 };
 
