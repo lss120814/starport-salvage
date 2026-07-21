@@ -18,6 +18,9 @@ function simulateStage(stageIndex, options, seed) {
   const cfg = stages[stageIndex];
   const random = seeded(seed);
   const yieldMult = options.yieldMult || 1;
+  const difficulty = options.difficulty || 2;
+  const difficultyScale = [0, 0.9, 1.12, 1.38][difficulty];
+  const rewardScale = [0, 0.9, 1.18, 1.52][difficulty];
   const rareBoost = options.rarecore ? 0.06 : 0;
   const hazardBoost = options.rarecore ? 0.04 : 0;
   let elapsed = 0;
@@ -36,7 +39,7 @@ function simulateStage(stageIndex, options, seed) {
     const gate = gateAt !== null;
     const cargoInterval = cfg.cargo * (gate ? 1.24 : 1);
     const ramp = 1 - Math.min(0.3, elapsed / cfg.time * 0.3);
-    const hazardInterval = cfg.hazard * ramp * (1 - hazardBoost);
+    const hazardInterval = cfg.hazard * ramp * (1 - hazardBoost) / difficultyScale;
 
     if (cargoClock >= cargoInterval) {
       cargoClock = 0;
@@ -50,7 +53,7 @@ function simulateStage(stageIndex, options, seed) {
       const quotaPart = Math.min(base, Math.max(0, cfg.target - progress));
       const overflowPart = base - quotaPart;
       progress += base;
-      credits += (quotaPart + overflowPart * 0.35) * yieldMult;
+      credits += (quotaPart + overflowPart * 0.35) * yieldMult * rewardScale;
     }
     if (hazardClock >= hazardInterval) {
       hazardClock = 0;
@@ -77,10 +80,12 @@ function average(options) {
   }));
 }
 
-const baseline = average({ yieldMult: 1, rarecore: false });
-const upgraded = average({ yieldMult: 1.18, rarecore: false });
-const rarecore = average({ yieldMult: 1.18, rarecore: true });
-console.log(JSON.stringify({ baseline, upgraded, rarecore }));
+const tier1 = average({ yieldMult: 1, rarecore: false, difficulty: 1 });
+const baseline = average({ yieldMult: 1, rarecore: false, difficulty: 2 });
+const tier3 = average({ yieldMult: 1, rarecore: false, difficulty: 3 });
+const upgraded = average({ yieldMult: 1.18, rarecore: false, difficulty: 2 });
+const rarecore = average({ yieldMult: 1.18, rarecore: true, difficulty: 2 });
+console.log(JSON.stringify({ tier1, baseline, tier3, upgraded, rarecore }));
 
 if (!(baseline[0].credits < baseline[1].credits && baseline[1].credits < baseline[2].credits)) {
   throw new Error('later maps are not consistently richer');
@@ -93,4 +98,10 @@ if (!rarecore.every((value, index) => value.credits > upgraded[index].credits)) 
 }
 if (!rarecore.every((value, index) => value.hazards > upgraded[index].hazards)) {
   throw new Error('rarecore does not increase ambient danger');
+}
+if (!tier3.every((value, index) => value.hazards > baseline[index].hazards && baseline[index].hazards > tier1[index].hazards)) {
+  throw new Error('contract intensity does not scale ambient danger');
+}
+if (!tier3.every((value, index) => value.credits > baseline[index].credits && baseline[index].credits > tier1[index].credits)) {
+  throw new Error('contract intensity does not scale rewards');
 }
