@@ -89,6 +89,10 @@ const sandbox = {
     getItem: () => JSON.stringify({ version: 4, credits: 0, owned: [] }),
     setItem() {},
   },
+  sessionStorage: {
+    getItem: () => 'active',
+    setItem() {},
+  },
   Image: class Image {
     constructor() { this.complete = true; this.naturalWidth = 768; }
   },
@@ -124,6 +128,7 @@ eventHandlers.keydown({ key: 'Escape', code: 'Escape', repeat: false, preventDef
 if (!element('modal').classList.contains('hidden')) throw new Error('escape did not resume the game');
 eventHandlers.keydown({ key: ' ', code: 'Space', repeat: false, preventDefault() {} });
 let pulseActivated = false;
+let pulseReadyAgain = false;
 
 for (let frame = 1; frame <= 12000; frame += 1) {
   if (!raf) {
@@ -150,6 +155,7 @@ for (let frame = 1; frame <= 12000; frame += 1) {
   const label = element('objectiveLabel').textContent;
   const missionValue = element('missionValue').textContent;
   if (element('systemStatus').textContent.includes('充能')) pulseActivated = true;
+  if (pulseActivated && element('systemStatus').textContent.includes('READY')) pulseReadyAgain = true;
   if (stagePasses === 0 && missionValue === '回收链路在线') missionCompleted[0] = true;
   if (stagePasses === 1 && missionValue.startsWith('10.0')) missionCompleted[1] = true;
   if (stagePasses === 2 && missionValue.startsWith('3 / 3')) missionCompleted[2] = true;
@@ -173,6 +179,7 @@ const result = {
   moduleSelections,
   missionCompleted,
   pulseActivated,
+  pulseReadyAgain,
   cargoAfterGoal,
   credits: element('runCredits').textContent,
   maxSprites,
@@ -187,6 +194,7 @@ if (stagePasses !== 2) throw new Error('stage transitions failed');
 if (moduleSelections !== 2) throw new Error('run module choices failed');
 if (missionCompleted.some(value => !value)) throw new Error('distinct stage missions did not complete');
 if (!pulseActivated) throw new Error('spacebar pulse did not activate');
+if (!pulseReadyAgain) throw new Error('pulse did not return to ready state');
 if (cargoAfterGoal.some((count) => count < 30)) throw new Error('cargo stopped after goal');
 if (maxSprites > 70) throw new Error(`object rendering budget exceeded: ${maxSprites}`);
 if (!result.sawOverflowRule) throw new Error('overflow cargo rule is not visible');
