@@ -5,7 +5,7 @@ const game = fs.readFileSync('game.html', 'utf8');
 const tree = fs.readFileSync('tree.html', 'utf8');
 
 const checks = {
-  separatePages: /href="game\.html\?v=10/.test(home) && /href="tree\.html\?v=10/.test(home),
+  separatePages: /href="game\.html\?v=11/.test(home) && /href="tree\.html\?v=11/.test(home),
   threatContracts: (home.match(/data-threat="[123]"/g) || []).length === 3,
   threatAccessibility: (home.match(/aria-pressed="(?:true|false)"/g) || []).length === 3,
   keyboardRoutes: home.includes("e.code==='Space'") && home.includes("e.key==='Enter'"),
@@ -14,9 +14,14 @@ const checks = {
   pulseControls: game.includes('id="pulseBtn"') && game.includes("e.code==='Space'"),
   reliablePulse: game.includes('pulseCooldown=8') && game.includes('invuln=Math.max(invuln,.75)') && game.includes("o.kind==='hunter'"),
   pauseControl: game.includes("k==='escape'") && game.includes('SYSTEM PAUSED'),
+  cargoRelayLoop: game.includes('id="holdState"') && game.includes('function depositCargo()') && game.includes('drawRelay(t)'),
+  fieldBuilds: game.includes('FIELD BUILD AVAILABLE') && game.includes('function fireTurret()') && game.includes('data-build'),
+  bossObjectives: game.includes('function spawnBoss()') && game.includes('mission.boss') && game.includes("kind:'boss'"),
+  manualRecall: game.includes("k==='e'") && game.includes('function requestRecall()') && game.includes('id="recallBtn"'),
+  generatedAtlas: game.includes('assets/salvage-sprites-v11.png') && home.includes('assets/salvage-sprites-v11.png'),
   constantSpeedPointer: game.includes('if(!dx&&!dy&&pointerActive)') && game.includes('dx/=len;dy/=len'),
   keyboardOverridesPointer: game.includes('if(move)pointerActive=false'),
-  distinctMissions: game.includes('10 秒扫描') && game.includes('3 枚冷却核心'),
+  distinctMissions: game.includes('驻留扫描并击破晶墓守卫') && game.includes('争夺冷却核心并击破熔毁督军'),
   safeReturnIsNotVictory: game.includes("finish(true,false)") && game.includes("if(complete)save.victories"),
   persistentTree: tree.includes('save.owned.push(id)') && tree.includes('sessionStorage.setItem(KEY'),
   freshSessionTree: [home, game, tree].every(page => page.includes('sessionStorage.getItem(KEY)') && page.includes('sessionStorage.setItem(KEY')),

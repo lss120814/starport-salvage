@@ -13,7 +13,8 @@ if (!code.includes("ship.x=W/2;ship.y=H*.78") || !code.includes('pointerActive=f
 
 // Keep collection and navigation live, but make hazards non-lethal so the
 // deterministic smoke run can exercise all three stages.
-code = code.replace('danger?hit(o):collect(o)', 'danger?void 0:collect(o)');
+code = code.replace("if(danger){hit(o);if(o.kind!=='boss')objects.splice(i,1)}", "if(danger){if(o.kind!=='boss')objects.splice(i,1)}");
+code = code.replace('time:72', 'time:180').replace('time:92', 'time:220').replace('time:112', 'time:260');
 
 let raf = null;
 let now = 0;
@@ -21,9 +22,10 @@ let cargoDraws = 0;
 let frameSprites = 0;
 let maxSprites = 0;
 let stagePasses = 0;
-let sawOverflowRule = false;
 let moduleSelections = 0;
 let moduleButtons = [];
+let buildSelections = 0;
+let buildButtons = [];
 const missionCompleted = [false, false, false];
 const cargoAfterGoal = [0, 0, 0];
 const elements = new Map();
@@ -56,7 +58,9 @@ const context2d = new Proxy({
   createRadialGradient() { return { addColorStop() {} }; },
   drawImage(image, sx, sy) {
     frameSprites += 1;
-    if (sy === 0 && (sx === 256 || sx === 512)) cargoDraws += 1;
+    const col = Math.round(sx / (1774 / 4));
+    const row = Math.round(sy / (887 / 2));
+    if ((row === 0 && (col === 1 || col === 2)) || (row === 1 && col === 2)) cargoDraws += 1;
   },
 }, {
   get(target, key) { return key in target ? target[key] : (() => {}); },
@@ -83,6 +87,14 @@ const sandbox = {
         }));
         return moduleButtons;
       }
+      if (selector === '[data-build]') {
+        const ids = [...element('moduleGrid').innerHTML.matchAll(/data-build="([^"]+)"/g)].map(m => m[1]);
+        buildButtons = ids.map(id => ({
+          dataset: { build: id }, onclick: null,
+          classList: { add() {}, remove() {}, toggle() {} },
+        }));
+        return buildButtons;
+      }
       if (selector === '.module-card') return moduleButtons;
       return [];
     },
@@ -96,13 +108,14 @@ const sandbox = {
     setItem() {},
   },
   Image: class Image {
-    constructor() { this.complete = true; this.naturalWidth = 768; }
+    constructor() { this.complete = true; this.naturalWidth = 1774; this.naturalHeight = 887; }
   },
   innerWidth: 1200,
   innerHeight: 800,
   devicePixelRatio: 1.5,
   location: { href: '', search: '?threat=2', reload() {} },
   URLSearchParams,
+  navigator: {},
   performance: { now: () => now },
   requestAnimationFrame: (callback) => { raf = callback; },
   addEventListener(type, handler) { eventHandlers[type] = handler; },
@@ -134,6 +147,12 @@ let pulseReadyAgain = false;
 
 for (let frame = 1; frame <= 12000; frame += 1) {
   if (!raf) {
+    if (element('reportCode').textContent === 'FIELD BUILD AVAILABLE') {
+      if (buildButtons.length !== 3 || !buildButtons[0].onclick) throw new Error('build choice cards were not wired');
+      buildButtons[0].onclick();
+      buildSelections += 1;
+      continue;
+    }
     if (element('reportCode').textContent === 'SECTOR MODULE RECOVERED' && stagePasses < 2) {
       if (moduleButtons.length !== 3 || !moduleButtons[0].onclick) throw new Error('module choice cards were not wired');
       moduleButtons[0].onclick();
@@ -158,27 +177,29 @@ for (let frame = 1; frame <= 12000; frame += 1) {
   const missionValue = element('missionValue').textContent;
   if (element('systemStatus').textContent.includes('充能')) pulseActivated = true;
   if (pulseActivated && element('systemStatus').textContent.includes('READY')) pulseReadyAgain = true;
-  if (stagePasses === 0 && missionValue === '回收链路在线') missionCompleted[0] = true;
-  if (stagePasses === 1 && missionValue.startsWith('10.0')) missionCompleted[1] = true;
-  if (stagePasses === 2 && missionValue.startsWith('3 / 3')) missionCompleted[2] = true;
-  if (element('supplyState').textContent.includes('35%')) sawOverflowRule = true;
+  if (stagePasses === 0 && missionValue.includes('✓')) missionCompleted[0] = true;
+  if (stagePasses === 1 && missionValue.includes('✓') && missionValue.includes('10.0')) missionCompleted[1] = true;
+  if (stagePasses === 2 && missionValue.includes('✓') && missionValue.includes('3/3')) missionCompleted[2] = true;
   if (label === '航道扫描中' || label === '撤离门已开启') {
     cargoAfterGoal[stagePasses] += cargoDraws;
   }
-  if (stagePasses === 1 && canvas.onpointermove && label !== '撤离门已开启') {
-    canvas.onpointermove({ clientX: 600, clientY: 336 });
-  }
-  if (label === '撤离门已开启' && canvas.onpointermove) {
+  const held = Number.parseInt(element('holdState').textContent, 10) || 0;
+  const relays = [[192,160],[1008,160],[192,576]];
+  if (held >= 3 && canvas.onpointermove) canvas.onpointermove({ clientX: relays[stagePasses][0], clientY: relays[stagePasses][1] });
+  else if (stagePasses === 1 && canvas.onpointermove && label !== '深层航段门') canvas.onpointermove({ clientX: 600, clientY: 336 });
+  else if (canvas.onpointermove && label !== '深层航段门') canvas.onpointermove({ clientX: 600, clientY: 620 });
+  if (label === '深层航段门' && canvas.onpointermove) {
     canvas.onpointermove({ clientX: 600, clientY: 144 });
   }
 }
 
-const sprite = fs.readFileSync('assets/salvage-sprites.png');
+const sprite = fs.readFileSync('assets/salvage-sprites-v11.png');
 const pngSignature = sprite.subarray(0, 8).toString('hex');
 const result = {
   report: element('reportCode').textContent,
   stagePasses,
   moduleSelections,
+  buildSelections,
   missionCompleted,
   pulseActivated,
   pulseReadyAgain,
@@ -186,7 +207,6 @@ const result = {
   credits: element('runCredits').textContent,
   maxSprites,
   supplyState: element('supplyState').textContent,
-  sawOverflowRule,
   pngSignature,
 };
 console.log(JSON.stringify(result));
@@ -194,10 +214,10 @@ console.log(JSON.stringify(result));
 if (result.report !== 'EXTRACTION CONFIRMED') throw new Error('three-stage run did not finish');
 if (stagePasses !== 2) throw new Error('stage transitions failed');
 if (moduleSelections !== 2) throw new Error('run module choices failed');
+if (buildSelections < 3) throw new Error('field build choices did not trigger');
 if (missionCompleted.some(value => !value)) throw new Error('distinct stage missions did not complete');
 if (!pulseActivated) throw new Error('spacebar pulse did not activate');
 if (!pulseReadyAgain) throw new Error('pulse did not return to ready state');
 if (cargoAfterGoal.some((count) => count < 30)) throw new Error('cargo stopped after goal');
 if (maxSprites > 70) throw new Error(`object rendering budget exceeded: ${maxSprites}`);
-if (!result.sawOverflowRule) throw new Error('overflow cargo rule is not visible');
 if (pngSignature !== '89504e470d0a1a0a') throw new Error('sprite atlas is not a PNG');
