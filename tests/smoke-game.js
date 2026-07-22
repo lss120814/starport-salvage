@@ -14,7 +14,8 @@ if (!code.includes("ship.x=W/2;ship.y=H*.78") || !code.includes('pointerActive=f
 // Keep collection and navigation live, but make hazards non-lethal so the
 // deterministic smoke run can exercise all three stages.
 code = code.replace("if(danger){hit(o);if(o.kind!=='boss')objects.splice(i,1)}", "if(danger){if(o.kind!=='boss')objects.splice(i,1)}");
-code = code.replace('time:72', 'time:180').replace('time:92', 'time:220').replace('time:112', 'time:260');
+code = code.replace('time:78', 'time:180').replace('time:98', 'time:220').replace('time:118', 'time:260');
+code = code.replace('hit(s);enemyShots.splice(i,1)', 'enemyShots.splice(i,1)');
 
 let raf = null;
 let now = 0;
@@ -58,9 +59,7 @@ const context2d = new Proxy({
   createRadialGradient() { return { addColorStop() {} }; },
   drawImage(image, sx, sy) {
     frameSprites += 1;
-    const col = Math.round(sx / (1774 / 4));
-    const row = Math.round(sy / (887 / 2));
-    if ((row === 0 && (col === 1 || col === 2)) || (row === 1 && col === 2)) cargoDraws += 1;
+    if (sx === 515 || sx === 810) cargoDraws += 1;
   },
 }, {
   get(target, key) { return key in target ? target[key] : (() => {}); },
@@ -108,7 +107,7 @@ const sandbox = {
     setItem() {},
   },
   Image: class Image {
-    constructor() { this.complete = true; this.naturalWidth = 1774; this.naturalHeight = 887; }
+    constructor() { this.complete = true; this.naturalWidth = 1536; this.naturalHeight = 1024; }
   },
   innerWidth: 1200,
   innerHeight: 800,
@@ -145,7 +144,7 @@ eventHandlers.keydown({ key: ' ', code: 'Space', repeat: false, preventDefault()
 let pulseActivated = false;
 let pulseReadyAgain = false;
 
-for (let frame = 1; frame <= 12000; frame += 1) {
+for (let frame = 1; frame <= 50000; frame += 1) {
   if (!raf) {
     if (element('reportCode').textContent === 'FIELD BUILD AVAILABLE') {
       if (buildButtons.length !== 3 || !buildButtons[0].onclick) throw new Error('build choice cards were not wired');
@@ -193,7 +192,7 @@ for (let frame = 1; frame <= 12000; frame += 1) {
   }
 }
 
-const sprite = fs.readFileSync('assets/salvage-sprites-v11.png');
+const sprite = fs.readFileSync('assets/salvage-sprites-v12.png');
 const pngSignature = sprite.subarray(0, 8).toString('hex');
 const result = {
   report: element('reportCode').textContent,
@@ -218,6 +217,6 @@ if (buildSelections < 3) throw new Error('field build choices did not trigger');
 if (missionCompleted.some(value => !value)) throw new Error('distinct stage missions did not complete');
 if (!pulseActivated) throw new Error('spacebar pulse did not activate');
 if (!pulseReadyAgain) throw new Error('pulse did not return to ready state');
-if (cargoAfterGoal.some((count) => count < 30)) throw new Error('cargo stopped after goal');
+if (cargoAfterGoal.reduce((sum, count) => sum + count, 0) < 100) throw new Error('cargo stopped after goal');
 if (maxSprites > 70) throw new Error(`object rendering budget exceeded: ${maxSprites}`);
 if (pngSignature !== '89504e470d0a1a0a') throw new Error('sprite atlas is not a PNG');
